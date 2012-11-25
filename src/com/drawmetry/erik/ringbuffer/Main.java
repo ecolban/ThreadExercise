@@ -9,13 +9,14 @@ public class Main {
 	 *            - ignored
 	 */
 	public static void main(String[] args) {
-		BufferInterface buffer = new Buffer(1);
-		Producer p1 = new Producer(buffer);
-		Consumer[] consumers = new Consumer[40];
+		BufferInterface buffer = new Buffer(10);
+		Consumer[] consumers = new Consumer[20];
 		for (int i = 0; i < consumers.length; i++) {
 			consumers[i] = new Consumer(buffer);
 			consumers[i].start();
 		}
+		Producer p1 = new Producer(buffer);
+		p1.setName("The Producer");
 		p1.start();
 		try {
 			Thread.sleep(1000L);

@@ -28,11 +28,11 @@ public class Consumer extends Thread {
 	public void run() {
 		try {
 			while (true) {
-				Thread.sleep(random.nextInt(2000));
+				Thread.sleep(random.nextInt(500));
 					int x = buffer.remove();
 				}
 		} catch (InterruptedException e) {
-			System.out.println(Thread.currentThread().getName() +" is dying.");
+//			System.out.println(Thread.currentThread().getName() +" is dying.");
 		}
 	}
 

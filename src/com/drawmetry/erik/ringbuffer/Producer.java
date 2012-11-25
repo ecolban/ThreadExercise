@@ -29,12 +29,14 @@ public class Producer extends Thread {
 	public void run() {
 		try {
 			while (true) {
+				Thread.sleep(10);
 				int x = random.nextInt(10) + 1;
 				buffer.add(x);
 				// System.out.println(buffer + getName() + " produced " + x);
 			}
 		} catch (InterruptedException ex) {
-			System.out.println(Thread.currentThread().getName() + " is dying.");
+			// System.out.println(Thread.currentThread().getName() +
+			// " is dying.");
 		}
 	}
 

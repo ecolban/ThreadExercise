@@ -38,13 +38,15 @@ public class Buffer implements BufferInterface {
 	 */
 	public synchronized int remove() throws InterruptedException {
 		while (empty) {
+			// System.out.println(Thread.currentThread().getName() +
+			// " is waiting.");
 			wait();
 		}
 		first = (first + 1) % capacity;
 		empty = first == last;
 		full = false;
 		System.out.println(this + "==>" + buffer[first]);
-		notify();
+		notifyAll();
 		return buffer[first];
 	}
 
@@ -59,6 +61,8 @@ public class Buffer implements BufferInterface {
 	 */
 	public synchronized void add(int n) throws InterruptedException {
 		while (full) {
+			// System.out.println(Thread.currentThread().getName() +
+			// " is waiting.");
 			wait();
 		}
 		last = (last + 1) % capacity;
@@ -66,7 +70,7 @@ public class Buffer implements BufferInterface {
 		empty = false;
 		full = first == last;
 		System.out.println(this + "<==" + n);
-		notify();
+		notifyAll();
 	}
 
 	/**
@@ -87,10 +91,8 @@ public class Buffer implements BufferInterface {
 	@Override
 	public synchronized String toString() {
 		if (empty)
-			return getCount() + ":[] ";
+			return "[] ";
 		StringBuilder sb = new StringBuilder();
-		sb.append(getCount());
-		sb.append(":");
 		sb.append("[");
 		int i = (first + 1) % capacity;
 		while (i != last) {
