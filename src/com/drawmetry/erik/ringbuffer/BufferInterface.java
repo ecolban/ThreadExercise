@@ -15,18 +15,15 @@ public interface BufferInterface {
 	 * @throws InterruptedException
 	 *             if interrupted
 	 */
-	public int remove() throws InterruptedException;
+	public int remove();
 
 	/**
 	 * Adds a number to the end of the buffer.
 	 * 
 	 * @param x
 	 *            the number added
-	 * @throws InterruptedException
-	 *             if interrupted
-	 * 
 	 */
-	public void add(int x) throws InterruptedException;
+	public void add(int x);
 
 	/**
 	 * Gets the count of elements in the buffer
