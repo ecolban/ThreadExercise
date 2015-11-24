@@ -23,27 +23,25 @@ public class Producer implements Runnable {
 	public Producer(BufferInterface buffer) {
 		this.buffer = buffer;
 	}
-	
 
 	/**
 	 * Adds random numbers between 1 and 10 to a buffer until stopped
 	 */
 	public void run() {
-		while (running) {
-			try {
+		try {
+			while (running) {
 				Thread.sleep(40);
 				int x = random.nextInt(20) + 1;
 				buffer.add(x);
-			} catch (InterruptedException ex) {
-				running = false;
 			}
+		} catch (InterruptedException ex) {
+			System.err.println("Someone yanked the cable.");
 		}
 		System.out.println(Thread.currentThread().getName() + " is dying.");
 	}
 
-	public void stopRunning() throws InterruptedException {
+	public void stopProducing() throws InterruptedException {
 		this.running = false;
 	}
-
 
 }

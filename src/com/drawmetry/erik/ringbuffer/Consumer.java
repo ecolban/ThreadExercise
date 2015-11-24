@@ -36,7 +36,7 @@ public class Consumer extends Thread {
 					buffer.remove();
 				}
 			} catch (InterruptedException e) {
-				keepGoing = false;
+				System.err.println("Can't interrupt me!");
 			}
 		}
 		System.out.println(Thread.currentThread().getName() + " is dying.");

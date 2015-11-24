@@ -17,7 +17,7 @@ public class Main {
 		}
 		Producer[] producers = new Producer[2];
 		Thread[] threads = new Thread[2];
-		for (int i = 0; i < 2; i++) {
+		for (int i = 0; i < producers.length; i++) {
 			producers[i] = new Producer(buffer);
 			threads[i] = new Thread(producers[i]);
 			threads[i].setName("Producer_" + i);
@@ -26,7 +26,7 @@ public class Main {
 		try {
 			Thread.sleep(1000L);
 			for (Producer p : producers) {
-				p.stopRunning();
+				p.stopProducing();
 			}
 			for (Thread t: threads){
 				t.join();
