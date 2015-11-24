@@ -9,22 +9,30 @@ public class Main {
 	 *            - ignored
 	 */
 	public static void main(String[] args) {
-		BufferInterface buffer = new Buffer(10);
-		Consumer[] consumers = new Consumer[20];
+		BufferInterface buffer = new Buffer(20);
+		Consumer[] consumers = new Consumer[10];
 		for (int i = 0; i < consumers.length; i++) {
 			consumers[i] = new Consumer(buffer);
 			consumers[i].start();
 		}
-		Producer p1 = new Producer(buffer);
-		p1.setName("The Producer");
-		p1.start();
+		Producer[] producers = new Producer[2];
+		Thread[] threads = new Thread[2];
+		for (int i = 0; i < 2; i++) {
+			producers[i] = new Producer(buffer);
+			threads[i] = new Thread(producers[i]);
+			threads[i].setName("Producer_" + i);
+			threads[i].start();
+		}
 		try {
 			Thread.sleep(1000L);
-			p1.interrupt();
-			for(Consumer c: consumers) {
-				c.interrupt();
+			for (Producer p : producers) {
+				p.stopRunning();
 			}
-			
+			for (Thread t: threads){
+				t.join();
+			}
+			System.out.println("The buffer is: " + buffer);
+			buffer.add(-1);
 		} catch (InterruptedException e) {
 		}
 	}

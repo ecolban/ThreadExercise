@@ -72,6 +72,13 @@ public class Buffer implements BufferInterface {
 		System.out.println(this + "<==" + n);
 		notifyAll();
 	}
+	
+	public synchronized int peek() throws InterruptedException {
+		while (empty) {
+			wait();
+		}
+		return buffer[(first + 1) % capacity];
+	}
 
 	/**
 	 * Gets the count of elements in the buffer

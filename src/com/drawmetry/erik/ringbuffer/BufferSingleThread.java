@@ -60,6 +60,13 @@ public class BufferSingleThread implements BufferInterface {
 		empty = false;
 		full = first == last;
 	}
+	
+	public synchronized int peek() {
+		if(empty) {
+			throw new IllegalStateException("Buffer is empty.");
+		}
+		return buffer[(first + 1) % buffer.length];
+	}
 
 	/**
 	 * Gets the count of elements in the buffer

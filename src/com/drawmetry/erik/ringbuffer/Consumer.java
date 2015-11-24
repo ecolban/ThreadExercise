@@ -26,14 +26,19 @@ public class Consumer extends Thread {
 	 * Repeatedly consumes numbers from a buffer until interrupted
 	 */
 	public void run() {
-		try {
-			while (true) {
+		boolean keepGoing = true;
+		while (keepGoing) {
+			try {
 				Thread.sleep(random.nextInt(500));
-					int x = buffer.remove();
+				if (buffer.peek() < 0) {
+					keepGoing = false;
+				} else {
+					buffer.remove();
 				}
-		} catch (InterruptedException e) {
-//			System.out.println(Thread.currentThread().getName() +" is dying.");
+			} catch (InterruptedException e) {
+				keepGoing = false;
+			}
 		}
+		System.out.println(Thread.currentThread().getName() + " is dying.");
 	}
-
 }

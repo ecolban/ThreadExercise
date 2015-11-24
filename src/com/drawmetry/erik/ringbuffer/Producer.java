@@ -8,10 +8,11 @@ import java.util.Random;
  * @author ecolban
  * 
  */
-public class Producer extends Thread {
+public class Producer implements Runnable {
 
 	private final BufferInterface buffer;
 	private final Random random = new Random();
+	private volatile boolean running = true;
 
 	/**
 	 * Constructs an instance of a producer.
@@ -22,22 +23,27 @@ public class Producer extends Thread {
 	public Producer(BufferInterface buffer) {
 		this.buffer = buffer;
 	}
+	
 
 	/**
-	 * Adds random numbers between 1 and 10 to a buffer until interrupted
+	 * Adds random numbers between 1 and 10 to a buffer until stopped
 	 */
 	public void run() {
-		try {
-			while (true) {
-				Thread.sleep(10);
-				int x = random.nextInt(10) + 1;
+		while (running) {
+			try {
+				Thread.sleep(40);
+				int x = random.nextInt(20) + 1;
 				buffer.add(x);
-				// System.out.println(buffer + getName() + " produced " + x);
+			} catch (InterruptedException ex) {
+				running = false;
 			}
-		} catch (InterruptedException ex) {
-			// System.out.println(Thread.currentThread().getName() +
-			// " is dying.");
 		}
+		System.out.println(Thread.currentThread().getName() + " is dying.");
 	}
+
+	public void stopRunning() throws InterruptedException {
+		this.running = false;
+	}
+
 
 }
