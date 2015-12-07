@@ -13,7 +13,8 @@ public class Buffer implements BufferInterface {
 	private final int capacity;
 	private int first = 0;
 	private int last = 0;
-	private boolean empty = true;
+	private volatile boolean empty = true;
+	private volatile boolean full = false;
 
 	/**
 	 * Constructs an instance.
@@ -40,12 +41,14 @@ public class Buffer implements BufferInterface {
 		}
 		first = (first + 1) % capacity;
 		empty = first == last;
+		full = false;
 		System.out.println(this + "==>" + buffer[first]);
 		notifyAll();
 		return buffer[first];
 	}
 
-//	public synchronized int peakAndRemove(int pill) throws InterruptedException {
+//	public synchronized int peakAndRemove(int pill) throws
+//			InterruptedException {
 //		while (empty) {
 //			wait();
 //		}
@@ -75,6 +78,7 @@ public class Buffer implements BufferInterface {
 		last = (last + 1) % capacity;
 		buffer[last] = n;
 		empty = false;
+		full = first == last;
 		System.out.println(this + "<==" + n);
 		notifyAll();
 	}
@@ -89,9 +93,9 @@ public class Buffer implements BufferInterface {
 	/**
 	 * Gets the count of elements in the buffer
 	 * 
-	 * @return
+	 * @return the count
 	 */
-	public int getCount() {
+	public synchronized int getCount() {
 		if (empty) {
 			return 0;
 		} else if (first < last) {
@@ -125,6 +129,6 @@ public class Buffer implements BufferInterface {
 
 	@Override
 	public boolean isFull() {
-		return !empty && first == last;
+		return full;
 	}
 }
