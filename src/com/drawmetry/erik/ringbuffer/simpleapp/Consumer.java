@@ -1,6 +1,8 @@
-package com.drawmetry.erik.ringbuffer;
+package com.drawmetry.erik.ringbuffer.simpleapp;
 
 import java.util.concurrent.ThreadLocalRandom;
+
+import com.drawmetry.erik.ringbuffer.BufferInterface;
 
 
 /**
@@ -12,7 +14,6 @@ import java.util.concurrent.ThreadLocalRandom;
 public class Consumer extends Thread {
 
 	private final BufferInterface buffer;
-	public static final int POISON_PILL = -1;
 
 	/**
 	 * Constructs an instance of consumer.
@@ -26,29 +27,18 @@ public class Consumer extends Thread {
 	}
 
 	/**
-	 * Repeatedly removes a number from the buffer and processes it until the
-	 * POISON_PILL is encountered.
+	 * Repeatedly removes a number from the buffer and processes it until
+	 * interrupted.
 	 */
 	public void run() {
-		boolean keepGoing = true;
-		while (keepGoing) {
-			try {
-				int item;
-				synchronized (buffer) {
-					if ((item = buffer.peek()) == POISON_PILL) {
-						keepGoing = false;
-					} else {
-						buffer.remove();
-					}
-				}
-				if (item != POISON_PILL) {
-					process(item);
-				}
-			} catch (InterruptedException e) {
-				System.err.println("Can't interrupt me!");
+		try {
+			while (true) {
+				int item = buffer.remove();
+				process(item);
 			}
+		} catch (InterruptedException e) {
+			System.out.println(getName() + " was interrupted.");
 		}
-		System.out.println(getName() + " is done.");
 	}
 
 	private void process(int item) {
@@ -56,7 +46,6 @@ public class Consumer extends Thread {
 		int t = 200 + ThreadLocalRandom.current().nextInt(300);
 		long start = System.currentTimeMillis();
 		while (System.currentTimeMillis() < start + t) {
-			Thread.yield();
 		}
 
 	}

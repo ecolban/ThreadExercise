@@ -11,10 +11,9 @@ public class Buffer implements BufferInterface {
 
 	private final int[] buffer;
 	private final int capacity;
-	private int first;
-	private int last;
+	private int first = 0;
+	private int last = 0;
 	private boolean empty = true;
-	private boolean full = false;
 
 	/**
 	 * Constructs an instance.
@@ -25,7 +24,6 @@ public class Buffer implements BufferInterface {
 	public Buffer(int capacity) {
 		this.capacity = capacity;
 		buffer = new int[capacity];
-		first = last = 0;
 	}
 
 	/**
@@ -38,17 +36,28 @@ public class Buffer implements BufferInterface {
 	 */
 	public synchronized int remove() throws InterruptedException {
 		while (empty) {
-			// System.out.println(Thread.currentThread().getName() +
-			// " is waiting.");
 			wait();
 		}
 		first = (first + 1) % capacity;
 		empty = first == last;
-		full = false;
 		System.out.println(this + "==>" + buffer[first]);
 		notifyAll();
 		return buffer[first];
 	}
+
+//	public synchronized int peakAndRemove(int pill) throws InterruptedException {
+//		while (empty) {
+//			wait();
+//		}
+//		int nextIdx = (first + 1) % capacity;
+//		if (buffer[nextIdx] != pill) {
+//			first = nextIdx;
+//			empty = first == last;
+//			System.out.println(this + "==>" + buffer[first]);
+//			notifyAll();
+//		}
+//		return buffer[nextIdx];
+//	}
 
 	/**
 	 * Adds a number to the end of the buffer.
@@ -60,19 +69,16 @@ public class Buffer implements BufferInterface {
 	 *             if interrupted
 	 */
 	public synchronized void add(int n) throws InterruptedException {
-		while (full) {
-			// System.out.println(Thread.currentThread().getName() +
-			// " is waiting.");
+		while (isFull()) {
 			wait();
 		}
 		last = (last + 1) % capacity;
 		buffer[last] = n;
 		empty = false;
-		full = first == last;
 		System.out.println(this + "<==" + n);
 		notifyAll();
 	}
-	
+
 	public synchronized int peek() throws InterruptedException {
 		while (empty) {
 			wait();
@@ -119,6 +125,6 @@ public class Buffer implements BufferInterface {
 
 	@Override
 	public boolean isFull() {
-		return full;
+		return !empty && first == last;
 	}
 }

@@ -1,4 +1,7 @@
-package com.drawmetry.erik.ringbuffer;
+package com.drawmetry.erik.ringbuffer.simpleapp;
+
+import com.drawmetry.erik.ringbuffer.Buffer;
+import com.drawmetry.erik.ringbuffer.BufferInterface;
 
 public class Main {
 
@@ -26,14 +29,12 @@ public class Main {
 		try {
 			Thread.sleep(1000L);
 			System.out.println("Stopping production...");
-			for (Producer p : producers) {
-				p.stopProducing();
+			for (Thread t : producerThreads) {
+				t.interrupt();
 			}
-			for (Thread t: producerThreads){
-				t.join();
+			for (Thread t: consumers){
+				t.interrupt();
 			}
-			System.out.println("The buffer is: " + buffer);
-			buffer.add(Consumer.POISON_PILL);
 		} catch (InterruptedException e) {
 		}
 	}

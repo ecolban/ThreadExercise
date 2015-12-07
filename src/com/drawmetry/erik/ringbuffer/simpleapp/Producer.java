@@ -1,7 +1,8 @@
-package com.drawmetry.erik.ringbuffer;
+package com.drawmetry.erik.ringbuffer.simpleapp;
 
 import java.util.concurrent.ThreadLocalRandom;
 
+import com.drawmetry.erik.ringbuffer.BufferInterface;
 
 /**
  * A Producer adds repeatedly random numbers to a buffer.
@@ -12,7 +13,6 @@ import java.util.concurrent.ThreadLocalRandom;
 public class Producer implements Runnable {
 
 	private final BufferInterface buffer;
-	private volatile boolean running = true;
 
 	/**
 	 * Constructs an instance of a producer.
@@ -29,29 +29,23 @@ public class Producer implements Runnable {
 	 */
 	public void run() {
 		int item = 0;
-		while (running) {
-			try {
+		try {
+			while (true) {
 				item = produce();
 				buffer.add(item);
-			} catch (InterruptedException ex) {
-				System.err.println("Can't interrupt me!");
 			}
+		} catch (InterruptedException ex) {
+			System.out.println(Thread.currentThread().getName() + " was interrupted.");
 		}
-		System.out.println(Thread.currentThread().getName() + " is done.");
 	}
 
 	private int produce() {
 		// produce..., produce...
 		long start = System.currentTimeMillis();
 		int t = ThreadLocalRandom.current().nextInt(80);
-		while (System.currentTimeMillis() < start + t) {
-			Thread.yield();
+		while(System.currentTimeMillis() < start + t) {
 		}
 		return ThreadLocalRandom.current().nextInt(10);
-	}
-
-	public void stopProducing() throws InterruptedException {
-		this.running = false;
 	}
 
 }

@@ -12,7 +12,6 @@ public class BufferSingleThread implements BufferInterface {
 	private int first;
 	private int last;
 	private boolean empty;
-	private boolean full;
 
 	
 	/**
@@ -25,7 +24,6 @@ public class BufferSingleThread implements BufferInterface {
 		buffer = new int[capacity];
 		first = last = 0;
 		empty = true;
-		full = false;
 	}
 
 	/**
@@ -40,7 +38,6 @@ public class BufferSingleThread implements BufferInterface {
 		}
 		first = (first + 1) % buffer.length;
 		empty = first == last;
-		full = false;
 		return buffer[first];
 	}
 
@@ -52,13 +49,12 @@ public class BufferSingleThread implements BufferInterface {
 	 * 
 	 */
 	public void add(int x) {
-		if (full) {
+		if (isFull()) {
 			throw new IllegalStateException("Buffer is full.");
 		}
 		last = (last + 1) % buffer.length;
 		buffer[last] = x;
 		empty = false;
-		full = first == last;
 	}
 	
 	public synchronized int peek() {
@@ -109,7 +105,7 @@ public class BufferSingleThread implements BufferInterface {
 
 	@Override
 	public boolean isFull() {
-		return full;
+		return !empty && first == last;
 	}
 
 }
