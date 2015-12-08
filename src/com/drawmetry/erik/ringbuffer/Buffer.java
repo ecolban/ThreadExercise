@@ -2,12 +2,12 @@ package com.drawmetry.erik.ringbuffer;
 
 /**
  * This class combines two classical examples: the ring buffer and the
- * producer-consumer pattern.
+ * producer-consumer pattern. This class is thread safe.
  * 
  * @author ecolban
  * 
  */
-public class Buffer implements BufferInterface {
+public final class Buffer implements BufferInterface {
 
 	private final int[] buffer;
 	private final int capacity;
