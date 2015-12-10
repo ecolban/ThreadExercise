@@ -29,12 +29,12 @@ public class Producer implements Runnable {
 	 */
 	public void run() {
 		int item = 0;
-		while (running) {
+		while (running && !Thread.currentThread().isInterrupted()) {
+			item = produce();
 			try {
-				item = produce();
 				buffer.add(item);
 			} catch (InterruptedException ex) {
-				System.err.println("Can't interrupt me!");
+				Thread.currentThread().interrupt();
 			}
 		}
 		System.out.println(Thread.currentThread().getName() + " is done.");
@@ -42,15 +42,21 @@ public class Producer implements Runnable {
 
 	private int produce() {
 		// produce..., produce...
-		long start = System.currentTimeMillis();
-		int t = ThreadLocalRandom.current().nextInt(80);
-		while (System.currentTimeMillis() < start + t) {
-			Thread.yield();
-		}
+		Util.stayBusy(ThreadLocalRandom.current().nextInt(80));
 		return ThreadLocalRandom.current().nextInt(10);
 	}
 
-	public void stopProducing() throws InterruptedException {
+	/**
+	 * Stops the producer.
+	 * <p>
+	 * Use this method rather than an interrupt. An interrupt is ambiguous in
+	 * that it is not clear whether the intention is to stop the producer or to
+	 * interrupt the thread that it is running in. By using the stop() method,
+	 * every item produced gets added to the buffer, whereas if an interrupt is
+	 * used, the last item produced will likely not get added to the buffer and
+	 * goes to waste.
+	 */
+	public void stop() {
 		this.running = false;
 	}
 

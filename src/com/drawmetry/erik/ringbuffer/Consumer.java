@@ -4,7 +4,8 @@ import java.util.concurrent.ThreadLocalRandom;
 
 
 /**
- * Removes numbers from a buffer until interrupted.
+ * Removes numbers from a buffer until it encounters a POISON_PILL. To interrupt
+ * this thread, add the POISON_PILL to the buffer.
  * 
  * @author ecolban
  * 
@@ -22,7 +23,7 @@ public class Consumer extends Thread {
 	 */
 	public Consumer(BufferInterface buffer) {
 		this.buffer = buffer;
-		setName(getName().replaceFirst("Thread", "Consumer"));
+		setName(getName().replaceFirst("Thread", getClass().getSimpleName()));
 	}
 
 	/**
@@ -30,22 +31,23 @@ public class Consumer extends Thread {
 	 * POISON_PILL is encountered.
 	 */
 	public void run() {
-		boolean keepGoing = true;
-		while (keepGoing) {
+		boolean running = true;
+		while (running) {
 			try {
-				int item;
+				int item = POISON_PILL;
+				// POISON_PILL must *not* be removed from the buffer
 				synchronized (buffer) {
-					if ((item = buffer.peek()) == POISON_PILL) {
-						keepGoing = false;
-					} else {
-						buffer.remove();
+					if (buffer.peek() != POISON_PILL) {
+						item = buffer.remove();
 					}
 				}
-				if (item != POISON_PILL) {
+				if (item == POISON_PILL) {
+					running = false;
+				} else {
 					process(item);
 				}
 			} catch (InterruptedException e) {
-				System.err.println("Can't interrupt me!");
+				System.err.println(getName() + " was interrupted.");
 			}
 		}
 		System.out.println(getName() + " is done.");
@@ -53,11 +55,8 @@ public class Consumer extends Thread {
 
 	private void process(int item) {
 		// process..., process...
-		int t = 200 + ThreadLocalRandom.current().nextInt(300);
-		long start = System.currentTimeMillis();
-		while (System.currentTimeMillis() < start + t) {
-			Thread.yield();
-		}
+		Util.stayBusy(300 + ThreadLocalRandom.current().nextInt(100));
 
 	}
+
 }
