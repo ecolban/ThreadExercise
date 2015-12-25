@@ -3,6 +3,7 @@ package com.drawmetry.erik.ringbuffer.simpleapp;
 import java.util.concurrent.ThreadLocalRandom;
 
 import com.drawmetry.erik.ringbuffer.BufferInterface;
+import com.drawmetry.erik.ringbuffer.Util;
 
 
 /**
@@ -35,6 +36,7 @@ public class Consumer extends Thread {
 			while (true) {
 				int item = buffer.remove();
 				process(item);
+				System.out.println(buffer + "==>" + item);
 			}
 		} catch (InterruptedException e) {
 			System.out.println(getName() + " was interrupted.");
@@ -43,10 +45,6 @@ public class Consumer extends Thread {
 
 	private void process(int item) {
 		// process..., process...
-		int t = 200 + ThreadLocalRandom.current().nextInt(300);
-		long start = System.currentTimeMillis();
-		while (System.currentTimeMillis() < start + t) {
-		}
-
+		Util.stayBusy(200 + ThreadLocalRandom.current().nextInt(300));
 	}
 }

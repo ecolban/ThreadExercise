@@ -13,15 +13,18 @@ public class Producer implements Runnable {
 
 	private final BufferInterface buffer;
 	private volatile boolean running = true;
+	private boolean verbose;
 
 	/**
 	 * Constructs an instance of a producer.
 	 * 
 	 * @param buffer
 	 *            the buffer to which this producers adds numbers.
+	 * @param verbose TODO
 	 */
-	public Producer(BufferInterface buffer) {
+	public Producer(BufferInterface buffer, boolean verbose) {
 		this.buffer = buffer;
+		this.verbose = verbose;
 	}
 
 	/**
@@ -33,16 +36,21 @@ public class Producer implements Runnable {
 			item = produce();
 			try {
 				buffer.add(item);
+				if(verbose){
+					System.out.println(buffer + "<==" + item);
+				}
 			} catch (InterruptedException ex) {
 				Thread.currentThread().interrupt();
 			}
 		}
-		System.out.println(Thread.currentThread().getName() + " is done.");
+		if(verbose){
+			System.out.println(Thread.currentThread().getName() + " is done.");
+		}
 	}
 
 	private int produce() {
 		// produce..., produce...
-		Util.stayBusy(ThreadLocalRandom.current().nextInt(80));
+		Util.stayBusy(1 + ThreadLocalRandom.current().nextInt(80));
 		return ThreadLocalRandom.current().nextInt(10);
 	}
 

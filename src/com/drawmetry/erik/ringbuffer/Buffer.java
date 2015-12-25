@@ -42,7 +42,7 @@ public final class Buffer implements BufferInterface {
 		first = (first + 1) % capacity;
 		empty = first == last;
 		full = false;
-		System.out.println(this + "==>" + buffer[first]);
+//		System.out.println(this + "==>" + buffer[first]);
 		notifyAll();
 		return buffer[first];
 	}
@@ -79,7 +79,7 @@ public final class Buffer implements BufferInterface {
 		buffer[last] = n;
 		empty = false;
 		full = first == last;
-		System.out.println(this + "<==" + n);
+//		System.out.println(this + "<==" + n);
 		notifyAll();
 	}
 

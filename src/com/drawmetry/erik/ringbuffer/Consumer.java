@@ -13,6 +13,8 @@ import java.util.concurrent.ThreadLocalRandom;
 public class Consumer extends Thread {
 
 	private final BufferInterface buffer;
+	private final boolean verbose;
+
 	public static final int POISON_PILL = -1;
 
 	/**
@@ -20,9 +22,12 @@ public class Consumer extends Thread {
 	 * 
 	 * @param buffer
 	 *            the buffer this instances removes numbers from.
+	 * @param verbose
+	 *            TODO
 	 */
-	public Consumer(BufferInterface buffer) {
+	public Consumer(BufferInterface buffer, boolean verbose) {
 		this.buffer = buffer;
+		this.verbose = verbose;
 		setName(getName().replaceFirst("Thread", getClass().getSimpleName()));
 	}
 
@@ -39,6 +44,9 @@ public class Consumer extends Thread {
 				synchronized (buffer) {
 					if (buffer.peek() != POISON_PILL) {
 						item = buffer.remove();
+						if(verbose) {
+							System.out.println(buffer + "==>" + item);
+						}
 					}
 				}
 				if (item == POISON_PILL) {
@@ -47,15 +55,19 @@ public class Consumer extends Thread {
 					process(item);
 				}
 			} catch (InterruptedException e) {
-				System.err.println(getName() + " was interrupted.");
+				if (verbose) {
+					System.err.println(getName() + " was interrupted.");
+				}
 			}
 		}
-		System.out.println(getName() + " is done.");
+		if (verbose) {
+			System.out.println(getName() + " is done.");
+		}
 	}
 
 	private void process(int item) {
 		// process..., process...
-		Util.stayBusy(300 + ThreadLocalRandom.current().nextInt(100));
+		Util.stayBusy(300 + ThreadLocalRandom.current().nextInt(101));
 
 	}
 

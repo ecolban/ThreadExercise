@@ -33,6 +33,7 @@ public class Producer implements Runnable {
 			while (true) {
 				item = produce();
 				buffer.add(item);
+				System.out.println(buffer + "<==" + item);
 			}
 		} catch (InterruptedException ex) {
 			System.out.println(Thread.currentThread().getName() + " was interrupted.");

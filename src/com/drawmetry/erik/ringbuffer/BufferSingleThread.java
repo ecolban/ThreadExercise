@@ -13,7 +13,6 @@ public class BufferSingleThread implements BufferInterface {
 	private int last;
 	private boolean empty;
 
-	
 	/**
 	 * Constructs an instance.
 	 * 
@@ -56,9 +55,9 @@ public class BufferSingleThread implements BufferInterface {
 		buffer[last] = x;
 		empty = false;
 	}
-	
+
 	public synchronized int peek() {
-		if(empty) {
+		if (empty) {
 			throw new IllegalStateException("Buffer is empty.");
 		}
 		return buffer[(first + 1) % buffer.length];
@@ -67,7 +66,7 @@ public class BufferSingleThread implements BufferInterface {
 	/**
 	 * Gets the count of elements in the buffer
 	 * 
-	 * @return
+	 * @return the number of elements in the buffer
 	 */
 	public int getCount() {
 		if (empty) {
